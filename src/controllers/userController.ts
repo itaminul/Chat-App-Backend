@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 export class UserController {
-  static create(arg0: string, create: any) {
+  async create(req: Request, res: Response, next: NextFunction) {
     return "dafaf";
   }
 }
