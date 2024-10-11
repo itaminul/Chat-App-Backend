@@ -21,8 +21,11 @@ model Users {
   email       String   @unique
   address     String?
   phone       String?
+  groupId     Int
   createdAt   Int?
-  createdDate DateTime
+  createdDate DateTime?
+  updateAt    Int?
+  updatedDate DateTime?
 }
 
 model Check {
