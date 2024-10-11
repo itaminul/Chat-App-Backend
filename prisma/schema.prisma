@@ -14,18 +14,38 @@ datasource db {
 }
 
 model Users {
-  id          Int      @id @default(autoincrement())
-  name        String
-  userName    String   @unique
-  password    String
-  email       String   @unique
-  address     String?
-  phone       String?
-  groupId     Int
-  createdAt   Int?
-  createdDate DateTime?
-  updateAt    Int?
-  updatedDate DateTime?
+  id               Int        @id @default(autoincrement())
+  name             String
+  userName         String     @unique
+  password         String
+  email            String     @unique
+  address          String?
+  phone            String?
+  groupId          Int
+  roleName         String
+  createdAt        Int?
+  createdDate      DateTime?
+  updateAt         Int?
+  updatedDate      DateTime?
+  sentMessages     Messages[] @relation("SentMessages")
+  receivedMessages Messages[] @relation("ReceivedMessages")
+}
+
+model Messages {
+  id              Int       @id @default(autoincrement())
+  senderId        Int
+  recipientId     Int
+  content         String
+  timestamp       DateTime  @default(now())
+  sender          Users     @relation("SentMessages", fields: [senderId], references: [id])
+  recipient       Users     @relation("ReceivedMessages", fields: [recipientId], references: [id])
+  messageSenderId Int
+  messageType     String //send, rcv
+  fileUrl         String
+  createdAt       Int?
+  createdDate     DateTime?
+  updateAt        Int?
+  updatedDate     DateTime?
 }
 
 model Check {
