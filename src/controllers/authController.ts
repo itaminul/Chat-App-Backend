@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-// import jwt from "jsonwebtoken";
 const jwt = require("jsonwebtoken");
 
 const prismaService = new PrismaClient();
@@ -26,22 +25,27 @@ export class AuthController {
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { username, password } = req.body;
+
       const user = await prismaService.user.findUnique({
         where: {
           username,
         },
       });
+
       if (!user) {
-        return res.status(401).json({ error: "Invalid credentials" });
+        res.status(401).json({ error: "Invalid credentials" });
+        return;
       }
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return res.status(401).json({ error: "Invalid credentials" });
+        res.status(401).json({ error: "Invalid credentials" });
+        return;
       }
+
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
         expiresIn: "10h",
       });
-      res.json({ token });
+      res.status(200).json(token);
     } catch (error) {
       next(error);
     }

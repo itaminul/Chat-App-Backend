@@ -66,6 +66,10 @@
     </div>
 
     <script>
+      let socket;
+      let currentGroupId;
+      let currentUserId;
+      let currentUser;
       async function register() {
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
@@ -78,7 +82,32 @@
         alert(data.message);
       }
 
-      
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await response.json();
+       
+        if (data) {
+          localStorage.setItem("token", data.token);
+          document.getElementById("auth").style.display = "none";
+          document.getElementById("chat").style.display = "flex";
+          currentUser = { username };
+          //initializeSocket();
+          //fetchGroups();
+          //fetchUsers();
+        } else {
+          alert("Login failed");
+        }
+      }
+
+      async function createGroup() {
+
+      }
     </script>
   </body>
 </html>
