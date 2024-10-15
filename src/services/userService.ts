@@ -5,26 +5,11 @@ const prismaService = new PrismaClient();
 export class UsersService {
   async createUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const {
-        name,
-        userName,
-        password,
-        email,
-        address,
-        phone,
-        groupId,
-        roleName,
-      } = req.body;
-      const results = await prismaService.users.create({
+      const { username, password } = req.body;
+      const results = await prismaService.user.create({
         data: {
-          name,
-          userName,
+          username,
           password,
-          email,
-          address,
-          phone,
-          groupId,
-          roleName,
         },
       });
       res.status(201).json(results);
