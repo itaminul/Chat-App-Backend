@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <style>
+      .chat-container {
+        display: flex;
+        height: 100vh;
+      }
+      .sidebar {
+        width: 200px;
+        border-right: 1px solid #ccc;
+        padding: 10px;
+      }
+      .main-content {
+        flex-grow: 1;
+        padding: 10px;
+      }
+      .message-list {
+        height: calc(100vh - 150px);
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      .user-list {
+        margin-top: 20px;
+      }
+      .active {
+        color: green;
+      }
+      .inactive {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="auth">
+      <h2>Authentication</h2>
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="register()">Register</button>
+      <button onclick="login()">Login</button>
+    </div>
+
+    <div id="chat" style="display: none" class="chat-container">
+      <div class="sidebar">
+        <h3>Groups</h3>
+        <ul id="groupList"></ul>
+        <input type="text" id="newGroupName" placeholder="New Group Name" />
+        <button onclick="createGroup()">Create Group</button>
+        <div class="user-list">
+          <h3>Users</h3>
+          <ul id="userList"></ul>
+        </div>
+      </div>
+      <div class="main-content">
+        <h2 id="currentChat">Select a group or user</h2>
+        <div id="messages" class="message-list"></div>
+        <input type="text" id="messageInput" placeholder="Type a message" />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <script>
+      async function register() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const respose = await fetch("/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await respose.json();
+        alert(data.message);
+      }
+    </script>
+  </body>
+</html>
