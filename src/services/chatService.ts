@@ -2,10 +2,11 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
 const prismaService = new PrismaClient();
 export class ChatService {
-  async createChate(req: Request, res: Response, next: NextFunction) {
+  async createChat(req: Request, res: Response, next: NextFunction) {
     try {
       const { name } = req.body;
       const userId = req.body.user.id;
+      console.log("user id",name)
       const group = await prismaService.group.create({
         data: {
           name,

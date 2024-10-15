@@ -91,7 +91,7 @@
           body: JSON.stringify({ username, password }),
         });
         const data = await response.json();
-       
+
         if (data) {
           localStorage.setItem("token", data.token);
           document.getElementById("auth").style.display = "none";
@@ -106,7 +106,18 @@
       }
 
       async function createGroup() {
-
+        const token = localStorage.getItem("token");
+        const name = document.getElementById("newGroupName").value;
+        const response = await fetch("/api/chat/groups", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name }),
+        });
+        const group = await response.json();
+        // fetchGroups();
       }
     </script>
   </body>
