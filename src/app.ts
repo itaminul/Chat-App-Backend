@@ -1,7 +1,7 @@
 import express from 'express';
 
 import dotenv from "dotenv";
-import http from "http";
+import http, { Server } from "http";
 import router from "./routes/indexRoutes";
 import bodyParser from "body-parser";
 import { setupSocket } from "./socket";
@@ -29,7 +29,17 @@ const databaseURL = process.env.DATABASE_URL;
 app.use("/api", router);
 
 const server = http.createServer(app);
-const io = setupSocket(server);
+const io = new Server(server);
+
+app.get('/socket', (req, res) => {
+    res.send('Socket.IO Server is running');
+});
+
+io.on('connection', (socket) => {
+    console.log('A user connected');
+});
+
+
 server.listen(port, () => {
   console.log(`Server is running: ${port} and database: ${databaseURL}`);
 });
