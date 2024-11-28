@@ -5,7 +5,7 @@ export class ChatService {
   async createChat(req: Request, res: Response, next: NextFunction) {
     try {
       const { name } = req.body;
-      const userId = req.body.user.id;
+      const userId = 4;
       console.log("user id",name)
       const group = await prismaService.group.create({
         data: {

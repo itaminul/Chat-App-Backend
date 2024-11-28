@@ -4,8 +4,9 @@ const chateService = new ChatService();
 export class ChatController {
   async createGroup(req: Request, res: Response, next: NextFunction) {
     try {
+     
       const group = await chateService.createChat(req, res, next);
-      return group;
+      res.status(201).json(group);
     } catch (error) {
       next(error);
     }

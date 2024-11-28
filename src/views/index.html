@@ -85,21 +85,28 @@
       async function login() {
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
+
         const response = await fetch("/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
         });
-        const data = await response.json();
 
-        if (data) {
+        if (!response.ok) {
+          const errorData = await response.json();
+          alert(errorData.error || "Login failed");
+          return; // Exit if the response is not OK
+        }
+
+        const data = await response.json();
+        if (data.token) {
           localStorage.setItem("token", data.token);
+          localStorage.setItem("userId", data.userId);
           document.getElementById("auth").style.display = "none";
           document.getElementById("chat").style.display = "flex";
           currentUser = { username };
-          //initializeSocket();
-          //fetchGroups();
-          //fetchUsers();
+          console.log("Token set:", data.token);
+          // Initialize socket and fetch groups/users if necessary
         } else {
           alert("Login failed");
         }
@@ -107,6 +114,7 @@
 
       async function createGroup() {
         const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
         const name = document.getElementById("newGroupName").value;
         const response = await fetch("/api/chat/groups", {
           method: "POST",
@@ -116,6 +124,7 @@
           },
           body: JSON.stringify({ name }),
         });
+        console.log("response", response);
         const group = await response.json();
         // fetchGroups();
       }
