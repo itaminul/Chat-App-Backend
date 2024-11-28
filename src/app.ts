@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 
 import dotenv from "dotenv";
 import http, { Server } from "http";
@@ -12,7 +12,7 @@ import session from "express-session";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 // setting the session middleware
 app.use(
   session({
@@ -31,15 +31,15 @@ app.use("/api", router);
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.get('/socket', (req, res) => {
-    res.send('Socket.IO Server is running');
+app.get("/socket", (req, res) => {
+  res.send("Socket.IO Server is running");
 });
 
-io.on('connection', (socket) => {
-    console.log('A user connected');
+io.on("connection", (socket) => {
+  console.log("A user connected");
 });
 
-
+setupSocket(server);
 server.listen(port, () => {
   console.log(`Server is running: ${port} and database: ${databaseURL}`);
 });
