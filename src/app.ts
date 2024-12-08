@@ -1,4 +1,5 @@
-import express from "express";
+import express from 'express';
+
 import dotenv from "dotenv";
 import http from "http";
 import router from "./routes/indexRoutes";
@@ -11,6 +12,7 @@ import session from "express-session";
 dotenv.config();
 
 const app = express();
+const port = process.env.PORT || 3001;
 // setting the session middleware
 app.use(
   session({
@@ -22,7 +24,6 @@ app.use(
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
-const port = process.env.PORT || 3001;
 
 const databaseURL = process.env.DATABASE_URL;
 app.use("/api", router);
@@ -33,6 +34,6 @@ server.listen(port, () => {
   console.log(`Server is running: ${port} and database: ${databaseURL}`);
 });
 
-app.get("/", (req, res) => {
+app.get("/", (req: any, res: any) => {
   res.sendFile(path.join(__dirname, "views", "index.html"));
 });
