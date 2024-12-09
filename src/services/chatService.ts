@@ -5,13 +5,12 @@ export class ChatService {
   async createChat(req: Request, res: Response, next: NextFunction) {
     try {
       const { name } = req.body;
-      const userId = 1
-      console.log("user id", userId);
+      const userId = 1;
       const group = await prismaService.group.create({
         data: {
           name,
           members: {
-             connect: { id: userId },
+            connect: { id: userId },
           },
         },
       });
