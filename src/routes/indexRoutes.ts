@@ -6,4 +6,5 @@ import chatRoute from "../routes/chatRoutes";
 router.use("/user", userRoute);
 router.use("/auth", authRoute);
 router.use("/chat", chatRoute);
+
 export default router;

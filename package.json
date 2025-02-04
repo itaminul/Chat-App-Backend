@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "watch": "tsc --watch",
-    "start": "nodemon src/app.ts",
+    "start": "nodemon src/app.ts --watch",
     "dev": "nodemon app.ts",
     "migrate:generate": "prisma migrate dev --schema=./prisma/schema.prisma",
     "migrate:run": "prisma migrate deploy --schema=./prisma/schema.prisma",
