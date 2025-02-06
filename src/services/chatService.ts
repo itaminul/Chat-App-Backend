@@ -9,7 +9,7 @@ export class ChatService {
       const group = await prismaService.group.create({
         data: {
           name,
-          members: {
+          messages: {
             connect: { id: userId },
           },
         },

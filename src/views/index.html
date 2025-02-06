@@ -66,6 +66,8 @@
     </div>
 
     <script>
+            // import { io } from 'socket.io-client'
+            // const socket = io('http://localhost:3002')
       let socket;
       let currentGroupId;
       let currentUserId;
@@ -73,7 +75,7 @@
       async function register() {
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
-        const respose = await fetch("http://localhost:3001/api/auth/register", {
+        const respose = await fetch("http://localhost:3002/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
@@ -86,7 +88,7 @@
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
 
-        const response = await fetch("http://localhost:3001/api/auth/login", {
+        const response = await fetch("http://localhost:3002/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
@@ -107,6 +109,7 @@
           currentUser = { username };
           console.log("Token set:", data.token);
           // Initialize socket and fetch groups/users if necessary
+          initializeSocket();
         } else {
           alert("Login failed");
         }
@@ -116,7 +119,7 @@
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userId");
         const name = document.getElementById("newGroupName").value;
-        const response = await fetch("http://localhost:3001/api/chat/groups", {
+        const response = await fetch("http://localhost:3002/api/chat/groups", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -130,18 +133,36 @@
       }
 
       function sendMessage() {
-            const content = document.getElementById('messageInput').value;
-            if (content) {
-                if (currentGroupId) {
-                    socket.emit('send_message', { groupId: currentGroupId, content });
-                } else if (currentUserId) {
-                    socket.emit('send_private_message', { receiverId: currentUserId, content });
-                }
-                document.getElementById('messageInput').value = '';
-            }
+        const content = document.getElementById("messageInput").value;
+        console.log("message is", content);
+        if (content && socket) {
+         
+            socket.emit("send_message", { groupId: currentGroupId, content });
+        
+          document.getElementById("messageInput").value = "";
+        }else{
+          console.log("Socket not initialized or message is empty");
         }
+      }
 
+      function initializeSocket() {
+        const token = localStorage.getItem("token");
+        socket = io({
+          auth: {
+            token: token,
+          },
+        });
 
+        socket.on("new_message", (message) => {
+          if (message.groupId === currentGroupId) {
+            // addMessageToList(message);
+          }
+        });
+
+        socket.on("user_status_change", ({ userId, isActive }) => {
+          updateUserStatus(userId, isActive);
+        });
+      }
     </script>
   </body>
 </html>
