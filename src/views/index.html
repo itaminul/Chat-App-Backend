@@ -59,19 +59,29 @@
       </div>
       <div class="main-content">
         <h2 id="currentChat">Select a group or user</h2>
-        <div id="messages" class="message-list"></div>
+        <div id="messages" class="message-list">dfaf</div>
         <input type="text" id="messageInput" placeholder="Type a message" />
         <button onclick="sendMessage()">Send</button>
       </div>
     </div>
 
     <script>
-            // import { io } from 'socket.io-client'
-            // const socket = io('http://localhost:3002')
+      // import { io } from 'socket.io-client'
+      // const socket = io('http://localhost:3002')
       let socket;
-      let currentGroupId;
-      let currentUserId;
+      let currentGroupId = 1;
+      let currentUserId = 1;
       let currentUser;
+
+      // Function to add a message to the list
+      function addMessageToList(message) {
+        const messageList = document.getElementById("messages");
+        console.log("messageList", messageList);
+        const li = document.createElement("li");
+        li.textContent = `${message.user.username}: ${message.content}`;
+        messageList.appendChild(li); // Append the message to the list
+      }
+
       async function register() {
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
@@ -132,15 +142,57 @@
         // fetchGroups();
       }
 
+      async function fetchGroups() {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3002/api/chat/groups', {
+              method: "GET",
+              headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+            });
+            const groups = await response.json();
+            const groupList = document.getElementById('groupList');
+            groupList.innerHTML = '';
+            groups.forEach(group => {
+                const li = document.createElement('li');
+                li.textContent = group.name;
+                li.onclick = () => joinGroup(group.id);
+                groupList.appendChild(li);
+            });
+        }
+
+
+      async function joinGroup(groupId) {
+        console.log("befor join_group", join_group);
+      //  if (currentGroupId) {
+        //  socket.emit("leave_group", currentGroupId);
+       // }
+      //  currentGroupId = groupId;
+        socket.emit("join_group", groupId);
+        const token = localStorage.getItem("token");
+        const response = await fetch(`http://localhost:3002/api/chat/groups/${groupId}/messages`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const messages = await response.json();
+        const messageList = document.getElementById("messageList");
+        console.log("mesage list group", messageList);
+        messageList.innerHTML = "";
+        messages.forEach(addMessageToList);
+      }
+
       function sendMessage() {
         const content = document.getElementById("messageInput").value;
         console.log("message is", content);
         if (content && socket) {
-         
-            socket.emit("send_message", { groupId: currentGroupId, content });
-        
+          socket.emit("send_message", { groupId: currentGroupId, content });
+
           document.getElementById("messageInput").value = "";
-        }else{
+        } else {
           console.log("Socket not initialized or message is empty");
         }
       }
@@ -154,14 +206,22 @@
         });
 
         socket.on("new_message", (message) => {
-          if (message.groupId === currentGroupId) {
-            // addMessageToList(message);
-          }
+          console.log("new message", message);
+          //  if (message.groupId === currentGroupId) {
+          addMessageToList(message);
+          // }
         });
 
         socket.on("user_status_change", ({ userId, isActive }) => {
           updateUserStatus(userId, isActive);
         });
+      }
+
+      function addMessageToListPP(message) {
+        console.log("new message second", message);
+        const li = document.createElement("li");
+        li.textContent = `${message.user.username}: ${message.content}`;
+        document.getElementById("messageList").appendChild(li);
       }
     </script>
   </body>
